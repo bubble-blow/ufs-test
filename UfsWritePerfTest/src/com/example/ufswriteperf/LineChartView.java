@@ -64,16 +64,16 @@ public class LineChartView extends View {
             return;
         }
 
-        float maxBytes = points.get(points.size() - 1).bytes;
         long maxMs = Math.max(1L, points.get(points.size() - 1).elapsedMs);
+        float maxBytes = points.get(points.size() - 1).bytes;
         float plotW = (w - right - left);
         float plotH = (h - bottom - top);
 
         float lastX = -1f;
         float lastY = -1f;
         for (DataPoint point : points) {
-            float x = left + (point.bytes / maxBytes) * plotW;
-            float y = h - bottom - ((float) point.elapsedMs / (float) maxMs) * plotH;
+            float x = left + ((float) point.elapsedMs / (float) maxMs) * plotW;
+            float y = h - bottom - (point.bytes / maxBytes) * plotH;
 
             if (lastX >= 0) {
                 canvas.drawLine(lastX, lastY, x, y, linePaint);
@@ -82,8 +82,8 @@ public class LineChartView extends View {
             lastY = y;
         }
 
-        canvas.drawText("X: 累积写入数据量 (Bytes)", left, h - 20, textPaint);
-        canvas.drawText("Y: 累积耗时 (ms)", left + 10, top + 30, textPaint);
+        canvas.drawText("X: 累积耗时 (ms)", left, h - 20, textPaint);
+        canvas.drawText("Y: 累积写入数据量 (Bytes)", left + 10, top + 30, textPaint);
         canvas.drawText(String.format(Locale.US, "末点: %d bytes / %d ms",
                 points.get(points.size() - 1).bytes,
                 points.get(points.size() - 1).elapsedMs), left + 10, top + 65, textPaint);
